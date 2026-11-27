@@ -2,6 +2,10 @@
 
 JetBrains IDE plugin (`io.github.sanskritcoders.github-san`) that restores **Open on GitHub** and **Copy GitHub URL** actions for files and directories inside Git submodules, worktrees, and multi-root repositories, and integrates [`diff_san`](https://github.com/sanskrit-coders/diff_san) (`local-diff-san`) for diffing against `HEAD` or comparing two selected files.
 
+- **JetBrains Marketplace:** [Github-san tools](https://plugins.jetbrains.com/plugin/36520-github-san-tools)
+- **GitHub Releases:** [`sanskrit-coders/jetbrains_san/releases`](https://github.com/sanskrit-coders/jetbrains_san/releases)
+- **VS Code sister extension:** [`sanskrit-coders/vscode_san`](https://github.com/sanskrit-coders/vscode_san)
+
 ## Why
 
 In multi-root projects where a parent repository and its submodules share the same GitHub `owner/repo` remote URL (for example `vedAH_yajuH` plus `vedAH_yajuH/content` and `vedAH_yajuH/static` submodules on separate branches), IntelliJ's built-in `GHHostedRepositoriesManager` deduplicates repositories solely by `GHRepositoryCoordinates`, dropping the submodules and hiding **Open In → GitHub** and **Copy Link to GitHub Repository**.
