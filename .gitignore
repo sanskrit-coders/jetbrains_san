@@ -1,0 +1,18 @@
+# Gradle & build outputs
+.gradle/
+*/.gradle/
+build/
+*/build/
+out/
+*/out/
+
+# IDE metadata
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS & temporary files
+.DS_Store
+*~
+*.log

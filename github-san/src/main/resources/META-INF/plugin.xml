@@ -1,0 +1,57 @@
+<idea-plugin>
+  <id>io.github.sanskritcoders.github-san</id>
+  <name>Github-san tools</name>
+  <version>1.0.0</version>
+  <vendor email="sanskrit-programmers@googlegroups.com" url="https://github.com/sanskrit-coders/jetbrains_san">Sanskrit Coders</vendor>
+  <description><![CDATA[Opens files and directories inside Git submodules, worktrees, and multi-root repositories on GitHub directly from JetBrains IDEs.
+    <p>
+      In projects where multiple submodules or checkouts share the same GitHub repository URL
+      (for example separate <code>content</code> and <code>static</code> branch submodules under a parent repo),
+      or in unregistered submodules and repository root directories, the built-in GitHub integration
+      hides the <b>Open in Browser</b> and <b>Copy Link</b> actions.
+    </p>
+    <ul>
+      <li><b>Open In &rarr; GitHub</b>: Opens the file or directory in your browser (supports Project View, Editor, Editor Tab, and NavBar).</li>
+      <li><b>Copy Path/Reference &rarr; GitHub Repository URL</b>: Copies the canonical GitHub URL (with line/selection <code>#L...</code> anchors from editors).</li>
+      <li><b>Submodules &amp; Worktrees</b>: Resolves <code>.git</code> pointer files, <code>commondir</code>, tracking branches, detached HEAD commits, and UTF-8 / Devanagari paths.</li>
+      <li><b>Zero Duplicate Clutter</b>: Automatically hides itself whenever the built-in GitHub action already covers the selected file.</li>
+    </ul>
+    <p>Source &amp; issue tracker: <a href="https://github.com/sanskrit-coders/jetbrains_san">sanskrit-coders/jetbrains_san</a>.</p>]]></description>
+  <change-notes><![CDATA[<h3>1.0.0</h3>
+    <ul>
+      <li>Initial release of <b>Github-san tools</b>.</li>
+      <li>Added <b>Open In &rarr; GitHub</b> and <b>Copy Path/Reference &rarr; GitHub Repository URL</b> fallback actions for Git submodules, worktrees, and directory roots.</li>
+      <li>Added automatic deduplication when the built-in GitHub plugin already handles the selected file.</li>
+    </ul>]]></change-notes>
+  <idea-version since-build="243" />
+
+  <depends>com.intellij.modules.platform</depends>
+  <depends optional="true" config-file="with-vcs.xml">com.intellij.modules.vcs</depends>
+  <depends optional="true" config-file="with-git.xml">Git4Idea</depends>
+  <depends optional="true" config-file="with-github.xml">org.jetbrains.plugins.github</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <notificationGroup id="Github-san tools" displayType="BALLOON" />
+  </extensions>
+
+  <actions>
+    <action id="io.github.sanskritcoders.githubsan.OpenInBrowser"
+            class="io.github.sanskritcoders.githubsan.OpenSubmoduleInGithubAction"
+            text="Open on GitHub"
+            description="Open the selected file or directory on GitHub (supports submodules)"
+            icon="AllIcons.Vcs.Vendors.Github">
+      <override-text place="RevealInPopup" text="GitHub" />
+      <override-text place="GoToAction" text="Open on GitHub (Github-san)" />
+      <add-to-group group-id="RevealGroup" anchor="last" />
+    </action>
+    <action id="io.github.sanskritcoders.githubsan.CopyUrl"
+            class="io.github.sanskritcoders.githubsan.CopySubmoduleGithubUrlAction"
+            text="Copy GitHub URL"
+            description="Copy the GitHub URL for the selected file or directory (supports submodules)"
+            icon="AllIcons.Vcs.Vendors.Github">
+      <override-text place="CopyReferencePopup" text="GitHub Repository URL" />
+      <add-to-group group-id="CopyFileReference" anchor="last" />
+      <add-to-group group-id="Copy.Paste.Special" relative-to-action="CopyReference" anchor="after" />
+    </action>
+  </actions>
+</idea-plugin>
