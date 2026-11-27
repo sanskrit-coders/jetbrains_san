@@ -1,9 +1,9 @@
 <idea-plugin>
   <id>io.github.sanskritcoders.github-san</id>
   <name>Github-san tools</name>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <vendor email="sanskrit-programmers@googlegroups.com" url="https://github.com/sanskrit-coders/jetbrains_san">Sanskrit Coders</vendor>
-  <description><![CDATA[Opens files and directories inside Git submodules, worktrees, and multi-root repositories on GitHub directly from JetBrains IDEs.
+  <description><![CDATA[Opens files and directories inside Git submodules, worktrees, and multi-root repositories on GitHub directly from JetBrains IDEs, and launches Sanskrit-aware diffs with <code>diff_san</code> (<code>local-diff-san</code>).
     <p>
       In projects where multiple submodules or checkouts share the same GitHub repository URL
       (for example separate <code>content</code> and <code>static</code> branch submodules under a parent repo),
@@ -13,11 +13,16 @@
     <ul>
       <li><b>Open In &rarr; GitHub</b>: Opens the file or directory in your browser (supports Project View, Editor, Editor Tab, and NavBar).</li>
       <li><b>Copy Path/Reference &rarr; GitHub Repository URL</b>: Copies the canonical GitHub URL (with line/selection <code>#L...</code> anchors from editors).</li>
+      <li><b>Diff with diff_san</b>: Diffs a selected file/directory (or multiple files) against Git <code>HEAD</code>, or compares two selected files side by side with <code>local-diff-san</code>.</li>
       <li><b>Submodules &amp; Worktrees</b>: Resolves <code>.git</code> pointer files, <code>commondir</code>, tracking branches, detached HEAD commits, and UTF-8 / Devanagari paths.</li>
-      <li><b>Zero Duplicate Clutter</b>: Automatically hides itself whenever the built-in GitHub action already covers the selected file.</li>
+      <li><b>Zero Duplicate Clutter</b>: Automatically hides Open/Copy GitHub actions whenever the built-in GitHub action already covers the selected file.</li>
     </ul>
     <p>Source &amp; issue tracker: <a href="https://github.com/sanskrit-coders/jetbrains_san">sanskrit-coders/jetbrains_san</a>.</p>]]></description>
-  <change-notes><![CDATA[<h3>1.0.0</h3>
+  <change-notes><![CDATA[<h3>1.1.0</h3>
+    <ul>
+      <li>Added <b>Diff against HEAD (diff_san)</b> / <b>Diff Two Files (diff_san)</b> action integrating <code>diff_san</code> (<code>local-diff-san</code>) from Project View, Editor, Editor Tabs, View &rarr; Compare Actions, and VCS Changes view.</li>
+    </ul>
+    <h3>1.0.0</h3>
     <ul>
       <li>Initial release of <b>Github-san tools</b>.</li>
       <li>Added <b>Open In &rarr; GitHub</b> and <b>Copy Path/Reference &rarr; GitHub Repository URL</b> fallback actions for Git submodules, worktrees, and directory roots.</li>
@@ -52,6 +57,17 @@
       <override-text place="CopyReferencePopup" text="GitHub Repository URL" />
       <add-to-group group-id="CopyFileReference" anchor="last" />
       <add-to-group group-id="Copy.Paste.Special" relative-to-action="CopyReference" anchor="after" />
+    </action>
+    <action id="io.github.sanskritcoders.githubsan.DiffWithDiffSan"
+            class="io.github.sanskritcoders.githubsan.DiffWithDiffSanAction"
+            text="Diff with diff_san"
+            description="Diff selected file(s) or directory against Git HEAD, or compare two selected files using diff_san"
+            icon="AllIcons.Actions.Diff">
+      <override-text place="GoToAction" text="Diff with diff_san (HEAD / Two Files)" />
+      <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CompareFileWithEditor" anchor="after" />
+      <add-to-group group-id="EditorPopupMenu" relative-to-action="CompareClipboardWithSelection" anchor="after" />
+      <add-to-group group-id="EditorTabPopupMenuEx" anchor="last" />
+      <add-to-group group-id="CompareActions" anchor="last" />
     </action>
   </actions>
 </idea-plugin>

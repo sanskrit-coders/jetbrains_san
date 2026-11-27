@@ -1,6 +1,6 @@
 # Github-san tools
 
-JetBrains IDE plugin (`io.github.sanskritcoders.github-san`) that restores **Open on GitHub** and **Copy GitHub URL** actions for files and directories inside Git submodules, worktrees, and multi-root repositories.
+JetBrains IDE plugin (`io.github.sanskritcoders.github-san`) that restores **Open on GitHub** and **Copy GitHub URL** actions for files and directories inside Git submodules, worktrees, and multi-root repositories, and integrates [`diff_san`](https://github.com/sanskrit-coders/diff_san) (`local-diff-san`) for diffing against `HEAD` or comparing two selected files.
 
 ## Why
 
@@ -10,8 +10,12 @@ In multi-root projects where a parent repository and its submodules share the sa
 
 - **Open In → GitHub** (`RevealGroup`) and **Open on GitHub (Github-san)** (`GoToAction`) for files, directories, and submodule roots.
 - **Copy Path/Reference → GitHub Repository URL** (`CopyFileReference` / `Copy.Paste.Special`) with `#L...` line/selection anchors from editors.
+- **Diff with `diff_san`** (`ProjectViewPopupMenu`, `EditorPopupMenu`, `EditorTabPopupMenuEx`, `CompareActions`, and `ChangesViewPopupMenu`):
+  - **1 file or directory** inside a Git repository/submodule → **Diff against HEAD (diff_san)** / **Diff Directory against HEAD (diff_san)**.
+  - **2 selected files** → **Diff Two Files (diff_san)**.
+  - **3+ selected files** in Git repositories → **Diff Files against HEAD (diff_san)** (`--head`).
 - Resolves `.git` pointer files (`gitdir: ...`), worktree `commondir` configs, tracking branch names (e.g. `origin/content` → `content`), detached HEAD commit SHAs, and UTF-8 / Devanagari path segments.
-- Automatically hides itself when IntelliJ's built-in `Github.Open.In.Browser` already covers the selected file, preventing duplicate menu entries.
+- Automatically hides Open/Copy GitHub actions when IntelliJ's built-in `Github.Open.In.Browser` already covers the selected file, preventing duplicate menu entries.
 
 ## Build & Install
 
@@ -21,9 +25,9 @@ In multi-root projects where a parent repository and its submodules share the sa
 bash package_with_idea.sh
 ```
 
-Produces `build/distributions/github-san-1.0.0.zip` and installs the JAR into `~/.config/JetBrains/IntelliJIdea2026.3/plugins/github-san/lib/`.
+Produces `build/distributions/github-san-1.1.0.zip` and installs the JAR into `~/.config/JetBrains/IntelliJIdea2026.3/plugins/github-san/lib/`.
 
-To load without restarting IntelliJ IDEA: **Settings → Plugins → ⚙️ → Install Plugin from Disk…** and select `build/distributions/github-san-1.0.0.zip`.
+To load without restarting IntelliJ IDEA: **Settings → Plugins → ⚙️ → Install Plugin from Disk…** and select `build/distributions/github-san-1.1.0.zip`.
 
 ### Gradle build (CI / JetBrains Marketplace)
 

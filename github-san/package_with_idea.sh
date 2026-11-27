@@ -9,7 +9,7 @@ IDEA_CFG_DIR="${IDEA_CFG_DIR:-$HOME/.config/JetBrains/IntelliJIdea2026.3}"
 PLUGINS_DIR="$IDEA_CFG_DIR/plugins"
 
 PLUGIN_DIR_NAME="github-san"
-PLUGIN_VERSION="1.0.0"
+PLUGIN_VERSION="1.1.0"
 JAR_NAME="$PLUGIN_DIR_NAME-$PLUGIN_VERSION.jar"
 
 OUT="$ROOT/out"
@@ -24,10 +24,13 @@ mkdir -p "$OUT/classes" "$OUT/test-classes" "$DIST_ROOT/$PLUGIN_DIR_NAME/lib"
 cp -r "$ROOT"/src/main/resources/* "$OUT/classes/"
 
 "$JBR/javac" --release 21 -Xlint:all -cp "$OUT/classes" -d "$OUT/test-classes" \
-  "$ROOT/src/test/java/io/github/sanskritcoders/githubsan/GitHubUrlResolverTest.java"
+  "$ROOT/src/test/java/io/github/sanskritcoders/githubsan/GitHubUrlResolverTest.java" \
+  "$ROOT/src/test/java/io/github/sanskritcoders/githubsan/DiffSanSupportTest.java"
 
 "$JBR/java" -cp "$OUT/classes:$OUT/test-classes" \
   io.github.sanskritcoders.githubsan.GitHubUrlResolverTest
+"$JBR/java" -cp "$OUT/classes:$OUT/test-classes" \
+  io.github.sanskritcoders.githubsan.DiffSanSupportTest
 
 (cd "$OUT/classes" && zip -q -r "$DIST_ROOT/$PLUGIN_DIR_NAME/lib/$JAR_NAME" .)
 (cd "$DIST_ROOT" && zip -q -r "$DIST_ROOT/$PLUGIN_DIR_NAME-$PLUGIN_VERSION.zip" "$PLUGIN_DIR_NAME")

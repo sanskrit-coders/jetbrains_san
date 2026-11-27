@@ -26,12 +26,16 @@ final class SubmoduleGithubActionSupport {
 
     private SubmoduleGithubActionSupport() {}
 
-    static boolean shouldShowForFileContext(AnActionEvent e) {
+    static boolean isHistoryContext(AnActionEvent e) {
         if (e.getData(VCS_FILE_REVISION_KEY) != null || e.getData(VCS_LOG_COMMIT_SELECTION_KEY) != null) {
-            return false;
+            return true;
         }
         String place = e.getPlace();
-        if (place != null && (place.contains("Vcs.Log") || place.contains("VcsHistory") || place.contains("History"))) {
+        return place != null && (place.contains("Vcs.Log") || place.contains("VcsHistory") || place.contains("History"));
+    }
+
+    static boolean shouldShowForFileContext(AnActionEvent e) {
+        if (isHistoryContext(e)) {
             return false;
         }
 

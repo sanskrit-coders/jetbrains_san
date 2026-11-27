@@ -1,1 +1,7 @@
-<idea-plugin />
+<idea-plugin>
+  <actions>
+    <reference ref="io.github.sanskritcoders.githubsan.DiffWithDiffSan">
+      <add-to-group group-id="ChangesViewPopupMenu" anchor="last" />
+    </reference>
+  </actions>
+</idea-plugin>
