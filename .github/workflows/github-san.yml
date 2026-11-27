@@ -3,7 +3,6 @@ name: Github-san tools
 on:
   push:
     branches: [ master ]
-    tags: [ 'v*', 'github-san-v*' ]
   pull_request:
     branches: [ master ]
   release:
@@ -42,7 +41,7 @@ jobs:
 
   publish:
     needs: build
-    if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/')
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     permissions:
       contents: write
