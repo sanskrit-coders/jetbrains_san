@@ -1,3 +1,5 @@
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+
 plugins {
     id("java")
     id("org.jetbrains.intellij.platform") version "2.20.1"
@@ -22,9 +24,11 @@ repositories {
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly("junit:junit:4.13.2")
 
     intellijPlatform {
         intellijIdea(providers.gradleProperty("platformVersion"))
+        testFramework(TestFrameworkType.Platform)
         pluginVerifier()
     }
 }
@@ -48,7 +52,7 @@ intellijPlatform {
 
     pluginVerification {
         ides {
-            recommended()
+            current()
         }
     }
 }
