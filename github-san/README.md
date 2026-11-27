@@ -21,6 +21,18 @@ In multi-root projects where a parent repository and its submodules share the sa
 - Resolves `.git` pointer files (`gitdir: ...`), worktree `commondir` configs, tracking branch names (e.g. `origin/content` → `content`), detached HEAD commit SHAs, and UTF-8 / Devanagari path segments.
 - Automatically hides Open/Copy GitHub actions when IntelliJ's built-in `Github.Open.In.Browser` already covers the selected file, preventing duplicate menu entries.
 
+## Prerequisites (`diff_san` binaries)
+
+For the **Diff with `diff_san`** actions (`local-diff-san`), install the Python tools from [`sanskrit-coders/diff_san`](https://github.com/sanskrit-coders/diff_san/blob/master/README.md) — specifically [`local_diff/README.md`](https://github.com/sanskrit-coders/diff_san/blob/master/local_diff/README.md):
+
+```bash
+pip install local-diff-san
+# Or editable install from a local diff_san clone:
+pip install -e /path/to/diff_san/pull_requests -e /path/to/diff_san/local_diff
+```
+
+The plugin automatically locates `local-diff-san` via `DIFF_SAN_BIN`, `PATH`, `<project>/.venv/bin`, `~/gitland/python_venv/bin`, and `~/.local/bin`.
+
 ## Build & Install
 
 ### Fast local build (using installed IntelliJ IDEA JBR + JARs)
@@ -29,9 +41,9 @@ In multi-root projects where a parent repository and its submodules share the sa
 bash package_with_idea.sh
 ```
 
-Produces `build/distributions/github-san-1.1.0.zip` and installs the JAR into `~/.config/JetBrains/IntelliJIdea2026.3/plugins/github-san/lib/`.
+Produces `build/distributions/github-san-1.1.1.zip` and installs the JAR into `~/.config/JetBrains/IntelliJIdea2026.3/plugins/github-san/lib/`.
 
-To load without restarting IntelliJ IDEA: **Settings → Plugins → ⚙️ → Install Plugin from Disk…** and select `build/distributions/github-san-1.1.0.zip`.
+To load without restarting IntelliJ IDEA: **Settings → Plugins → ⚙️ → Install Plugin from Disk…** and select `build/distributions/github-san-1.1.1.zip`.
 
 ### Gradle build (CI / JetBrains Marketplace)
 

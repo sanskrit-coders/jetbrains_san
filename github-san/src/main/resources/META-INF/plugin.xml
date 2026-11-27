@@ -1,9 +1,9 @@
 <idea-plugin>
   <id>io.github.sanskritcoders.github-san</id>
   <name>Github-san tools</name>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <vendor email="sanskrit-programmers@googlegroups.com" url="https://github.com/sanskrit-coders/jetbrains_san">Sanskrit Coders</vendor>
-  <description><![CDATA[Opens files and directories inside Git submodules, worktrees, and multi-root repositories on GitHub directly from JetBrains IDEs, and launches Sanskrit-aware diffs with <code>diff_san</code> (<code>local-diff-san</code>).
+  <description><![CDATA[Opens files and directories inside Git submodules, worktrees, and multi-root repositories on GitHub directly from JetBrains IDEs, and launches Sanskrit-aware diffs with <a href="https://github.com/sanskrit-coders/diff_san/blob/master/README.md"><code>diff_san</code></a> (<a href="https://github.com/sanskrit-coders/diff_san/blob/master/local_diff/README.md"><code>local-diff-san</code></a>).
     <p>
       In projects where multiple submodules or checkouts share the same GitHub repository URL
       (for example separate <code>content</code> and <code>static</code> branch submodules under a parent repo),
@@ -13,12 +13,17 @@
     <ul>
       <li><b>Open In &rarr; GitHub</b>: Opens the file or directory in your browser (supports Project View, Editor, Editor Tab, and NavBar).</li>
       <li><b>Copy Path/Reference &rarr; GitHub Repository URL</b>: Copies the canonical GitHub URL (with line/selection <code>#L...</code> anchors from editors).</li>
-      <li><b>Diff with diff_san</b>: Diffs a selected file/directory (or multiple files) against Git <code>HEAD</code>, or compares two selected files side by side with <code>local-diff-san</code>.</li>
+      <li><b>Diff with diff_san</b>: Diffs a selected file/directory (or multiple files) against Git <code>HEAD</code>, or compares two selected files side by side with <a href="https://github.com/sanskrit-coders/diff_san/blob/master/local_diff/README.md"><code>local-diff-san</code></a>.</li>
       <li><b>Submodules &amp; Worktrees</b>: Resolves <code>.git</code> pointer files, <code>commondir</code>, tracking branches, detached HEAD commits, and UTF-8 / Devanagari paths.</li>
       <li><b>Zero Duplicate Clutter</b>: Automatically hides Open/Copy GitHub actions whenever the built-in GitHub action already covers the selected file.</li>
     </ul>
+    <p><b>Prerequisites for Diff actions:</b> Install <code>local-diff-san</code> (<code>pip install local-diff-san</code>) following the <a href="https://github.com/sanskrit-coders/diff_san/blob/master/local_diff/README.md"><code>local-diff-san</code> README</a> (and see the <a href="https://github.com/sanskrit-coders/diff_san/blob/master/README.md"><code>diff_san</code> overview README</a>). The plugin automatically searches <code>DIFF_SAN_BIN</code>, <code>PATH</code>, project <code>.venv</code>/<code>venv</code>, <code>~/gitland/python_venv/bin</code>, and <code>~/.local/bin</code>.</p>
     <p>Source &amp; issue tracker: <a href="https://github.com/sanskrit-coders/jetbrains_san">sanskrit-coders/jetbrains_san</a>.</p>]]></description>
-  <change-notes><![CDATA[<h3>1.1.0</h3>
+  <change-notes><![CDATA[<h3>1.1.1</h3>
+    <ul>
+      <li>Linked <code>diff_san</code> and <code>local-diff-san</code> installation instructions in the plugin description and READMEs.</li>
+    </ul>
+    <h3>1.1.0</h3>
     <ul>
       <li>Added <b>Diff against HEAD (diff_san)</b> / <b>Diff Two Files (diff_san)</b> action integrating <code>diff_san</code> (<code>local-diff-san</code>) from Project View, Editor, Editor Tabs, View &rarr; Compare Actions, and VCS Changes view.</li>
     </ul>
