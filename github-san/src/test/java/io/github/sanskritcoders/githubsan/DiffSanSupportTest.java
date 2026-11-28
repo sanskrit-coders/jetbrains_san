@@ -1,17 +1,22 @@
 package io.github.sanskritcoders.githubsan;
 
+import com.sun.net.httpserver.HttpServer;
 import io.github.sanskritcoders.githubsan.DiffSanSupport.DiffMode;
 import io.github.sanskritcoders.githubsan.DiffSanSupport.DiffPlan;
 import io.github.sanskritcoders.githubsan.DiffSanSupport.LaunchResult;
+import io.github.sanskritcoders.githubsan.DiffSanSupport.ServerReuseConfig;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Unit tests for {@link DiffSanSupport} covering path selection, binary resolution, and launch checks.
@@ -30,6 +35,7 @@ public final class DiffSanSupportTest {
         testPlanSelectionMultipleFilesHead();
         testResolveExecutablePriority();
         testLaunchSuccessAndFailure();
+        testReuseRunningServerSkipsSpawn();
     }
 
     private static void testPlanSelectionSingleFileAndDirInGit() throws IOException {
@@ -195,6 +201,104 @@ public final class DiffSanSupportTest {
                     missingResult.errorMessage() != null && missingResult.errorMessage().contains("local-diff-san"),
                     "Missing binary message should mention local-diff-san");
         } finally {
+            deleteRecursively(tempDir);
+        }
+    }
+
+    private static void testReuseRunningServerSkipsSpawn() throws IOException {
+        Path tempDir = Files.createTempDirectory("diffsan-reuse-");
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        AtomicReference<String> metaJson = new AtomicReference<>(
+                "{\"app\":\"local-diff-san\",\"supports_paths\":true,\"has_active_ui\":false}");
+        List<String> compareBodies = new ArrayList<>();
+        server.createContext("/api/meta", ex -> {
+            byte[] body = metaJson.get().getBytes(StandardCharsets.UTF_8);
+            ex.getResponseHeaders().set("Content-Type", "application/json");
+            ex.sendResponseHeaders(200, body.length);
+            ex.getResponseBody().write(body);
+            ex.close();
+        });
+        server.createContext("/api/compare", ex -> {
+            String reqBody = new String(ex.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+            compareBodies.add(reqBody);
+            byte[] resp = "{\"ok\":true}".getBytes(StandardCharsets.UTF_8);
+            ex.getResponseHeaders().set("Content-Type", "application/json");
+            ex.sendResponseHeaders(200, resp.length);
+            ex.getResponseBody().write(resp);
+            ex.close();
+        });
+        server.start();
+        try {
+            Files.createDirectory(tempDir.resolve(".git"));
+            Path f1 = Files.writeString(tempDir.resolve("a.md"), "om", StandardCharsets.UTF_8);
+            Path f2 = Files.writeString(tempDir.resolve("b.md"), "tat", StandardCharsets.UTF_8);
+            Path f3 = Files.writeString(tempDir.resolve("c.md"), "sat", StandardCharsets.UTF_8);
+            Path failScript = writeExecutableScript(
+                    tempDir.resolve("fail-diff"),
+                    "#!/bin/sh\necho 'Must not spawn when running server responds' >&2\nexit 9\n");
+
+            String baseUrl = "http://127.0.0.1:" + server.getAddress().getPort() + "/";
+            Path regFile = tempDir.resolve("local-diff-san.json");
+            Files.writeString(
+                    regFile,
+                    "{\"app\":\"local-diff-san\",\"pid\":12345,\"url\":\"" + baseUrl + "\"}",
+                    StandardCharsets.UTF_8);
+
+            // Registry discovery works even if executable is failScript (or null)
+            DiffPlan singlePlan = DiffSanSupport.planSelection(List.of(f1));
+            LaunchResult singleRes = DiffSanSupport.launch(
+                    failScript,
+                    singlePlan,
+                    Duration.ofSeconds(2),
+                    new ServerReuseConfig(regFile, List.of()));
+            assertTrue(singleRes.started(), "Expected single-file reuse: " + singleRes.errorMessage());
+            assertEquals(baseUrl, singleRes.url(), "Expected reused registry URL");
+            assertEquals(1, compareBodies.size(), "Expected 1 POST /api/compare");
+            assertTrue(compareBodies.get(0).contains("\"mode\":\"git_head\""), compareBodies.get(0));
+            assertTrue(compareBodies.get(0).contains("\"open_browser_if_idle\":true"), compareBodies.get(0));
+
+            // Multi-file HEAD plan strips --head and uses paths array
+            DiffPlan multiPlan = DiffSanSupport.planSelection(List.of(f1, f2, f3));
+            LaunchResult multiRes = DiffSanSupport.launch(
+                    null,
+                    multiPlan,
+                    Duration.ofSeconds(2),
+                    new ServerReuseConfig(null, List.of(baseUrl)));
+            assertTrue(multiRes.started(), "Expected multi-file reuse without local binary");
+            String multiBody = compareBodies.get(1);
+            assertTrue(multiBody.contains("\"mode\":\"git_head\"") && !multiBody.contains("--head"), multiBody);
+            assertTrue(multiBody.contains("c.md"), multiBody);
+
+            // Two-file comparison and directory HEAD diff
+            LaunchResult pairRes = DiffSanSupport.launch(
+                    failScript,
+                    DiffSanSupport.planSelection(List.of(f1, f2)),
+                    Duration.ofSeconds(2),
+                    new ServerReuseConfig(regFile, List.of()));
+            assertTrue(pairRes.started(), "Expected two-file reuse");
+            assertTrue(compareBodies.get(2).contains("\"mode\":\"file_pair\""), compareBodies.get(2));
+
+            LaunchResult dirRes = DiffSanSupport.launch(
+                    failScript,
+                    DiffSanSupport.planSelection(List.of(tempDir)),
+                    Duration.ofSeconds(2),
+                    new ServerReuseConfig(regFile, List.of()));
+            assertTrue(dirRes.started(), "Expected dir reuse");
+            assertTrue(compareBodies.get(3).contains("\"mode\":\"git_dir\""), compareBodies.get(3));
+
+            // Wrong app metadata ignores server and falls back to normal launch
+            metaJson.set("{\"app\":\"pull_requests_san\"}");
+            LaunchResult fallbackRes = DiffSanSupport.launch(
+                    failScript,
+                    singlePlan,
+                    Duration.ofSeconds(2),
+                    new ServerReuseConfig(regFile, List.of()));
+            assertTrue(!fallbackRes.started(), "Expected fallback to spawn when app != local-diff-san");
+            assertTrue(
+                    fallbackRes.errorMessage() != null && fallbackRes.errorMessage().contains("code 9"),
+                    fallbackRes.errorMessage());
+        } finally {
+            server.stop(0);
             deleteRecursively(tempDir);
         }
     }

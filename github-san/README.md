@@ -44,9 +44,9 @@ The plugin automatically locates `local-diff-san` via `DIFF_SAN_BIN`, `PATH`, `<
 bash package_with_idea.sh
 ```
 
-Produces `build/distributions/github-san-1.2.0.zip` and installs the JAR into `~/.config/JetBrains/IntelliJIdea2026.3/plugins/github-san/lib/`.
+Produces `build/distributions/github-san-1.2.1.zip` and installs the JAR into `~/.config/JetBrains/IntelliJIdea2026.3/plugins/github-san/lib/`.
 
-To load without restarting IntelliJ IDEA: **Settings → Plugins → ⚙️ → Install Plugin from Disk…** and select `build/distributions/github-san-1.2.0.zip`.
+To load without restarting IntelliJ IDEA: **Settings → Plugins → ⚙️ → Install Plugin from Disk…** and select `build/distributions/github-san-1.2.1.zip`.
 
 ### Gradle build (CI / JetBrains Marketplace)
 

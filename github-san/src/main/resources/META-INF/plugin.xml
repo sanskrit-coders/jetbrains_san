@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>io.github.sanskritcoders.github-san</id>
   <name>Github-san tools</name>
-  <version>1.2.0</version>
+  <version>1.2.1</version>
   <vendor email="sanskrit-programmers@googlegroups.com" url="https://github.com/sanskrit-coders/jetbrains_san">Sanskrit Coders</vendor>
   <description><![CDATA[Opens files and directories inside Git submodules, worktrees, and multi-root repositories on GitHub directly from JetBrains IDEs, automatically pushes ahead Git submodules during pushes, and launches Sanskrit-aware diffs with <a href="https://github.com/sanskrit-coders/diff_san/blob/master/README.md"><code>diff_san</code></a> (<a href="https://github.com/sanskrit-coders/diff_san/blob/master/local_diff/README.md"><code>local-diff-san</code></a>).
     <p>
@@ -22,7 +22,11 @@
     </ul>
     <p><b>Prerequisites for Diff actions:</b> Install <code>local-diff-san</code> (<code>pip install local-diff-san</code>) following the <a href="https://github.com/sanskrit-coders/diff_san/blob/master/local_diff/README.md"><code>local-diff-san</code> README</a> (and see the <a href="https://github.com/sanskrit-coders/diff_san/blob/master/README.md"><code>diff_san</code> overview README</a>). The plugin automatically searches <code>DIFF_SAN_BIN</code>, <code>PATH</code>, project <code>.venv</code>/<code>venv</code>, <code>~/gitland/python_venv/bin</code>, and <code>~/.local/bin</code>.</p>
     <p>Source &amp; issue tracker: <a href="https://github.com/sanskrit-coders/jetbrains_san">sanskrit-coders/jetbrains_san</a>.</p>]]></description>
-  <change-notes><![CDATA[<h3>1.2.0</h3>
+  <change-notes><![CDATA[<h3>1.2.1</h3>
+    <ul>
+      <li><b>Diff with diff_san</b> now probes for an already-running <code>local-diff-san</code> server and reloads it via <code>/api/compare</code> instead of spawning or restarting another server instance.</li>
+    </ul>
+    <h3>1.2.0</h3>
     <ul>
       <li>Added silent bottom-up submodule auto-push via <code>com.intellij.prePushHandler</code> when <code>push.recurseSubmodules</code> is not configured on the machine.</li>
       <li>Added <b>Push Submodules &amp; Repository</b> action to push unpushed submodule commits bottom-up and then the superproject.</li>
