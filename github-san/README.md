@@ -1,6 +1,6 @@
 # Github-san tools
 
-JetBrains IDE plugin (`io.github.sanskritcoders.github-san`) that restores **Open on GitHub** and **Copy GitHub URL** actions for files and directories inside Git submodules, worktrees, and multi-root repositories, and integrates [`diff_san`](https://github.com/sanskrit-coders/diff_san) (`local-diff-san`) for diffing against `HEAD` or comparing two selected files.
+JetBrains IDE plugin (`io.github.sanskritcoders.github-san`) that restores **Open on GitHub** and **Copy GitHub URL** actions for files and directories inside Git submodules, worktrees, and multi-root repositories, silently auto-pushes ahead Git submodules during pushes, and integrates [`diff_san`](https://github.com/sanskrit-coders/diff_san) (`local-diff-san`) for diffing against `HEAD` or comparing two selected files.
 
 - **JetBrains Marketplace:** [Github-san tools](https://plugins.jetbrains.com/plugin/36520-github-san-tools)
 - **GitHub Releases:** [`sanskrit-coders/jetbrains_san/releases`](https://github.com/sanskrit-coders/jetbrains_san/releases)
@@ -12,6 +12,9 @@ In multi-root projects where a parent repository and its submodules share the sa
 
 ## Features
 
+- **Silent Submodule Auto-Push (`PrePushHandler`):** Intercepts IDE Git Push / Commit & Push (`com.intellij.prePushHandler`) and silently pushes submodules with unpushed commits in bottom-up order whenever `push.recurseSubmodules` is not configured on the machine (skipping detached HEAD submodules cleanly and aborting only if a submodule push fails).
+- **Push Submodules & Repository** (`Git.MainMenu`, `GitRepositoryActions`, `ProjectViewPopupMenu`): Explicitly pushes all ahead submodules bottom-up and then pushes the enclosing repository.
+- **Enable Git Submodule Auto-Push** (`Git.MainMenu`, `ToolsMenu`, `GoToAction`): Configures `git config --global push.recurseSubmodules on-demand` globally and optionally installs an idempotent bottom-up `.git/hooks/pre-push` hook so CLI / external pushes push submodules automatically too.
 - **Open In → GitHub** (`RevealGroup`) and **Open on GitHub (Github-san)** (`GoToAction`) for files, directories, and submodule roots.
 - **Copy Path/Reference → GitHub Repository URL** (`CopyFileReference` / `Copy.Paste.Special`) with `#L...` line/selection anchors from editors.
 - **Diff with `diff_san`** (`ProjectViewPopupMenu`, `EditorPopupMenu`, `EditorTabPopupMenuEx`, `CompareActions`, and `ChangesViewPopupMenu`):
@@ -41,9 +44,9 @@ The plugin automatically locates `local-diff-san` via `DIFF_SAN_BIN`, `PATH`, `<
 bash package_with_idea.sh
 ```
 
-Produces `build/distributions/github-san-1.1.1.zip` and installs the JAR into `~/.config/JetBrains/IntelliJIdea2026.3/plugins/github-san/lib/`.
+Produces `build/distributions/github-san-1.2.0.zip` and installs the JAR into `~/.config/JetBrains/IntelliJIdea2026.3/plugins/github-san/lib/`.
 
-To load without restarting IntelliJ IDEA: **Settings → Plugins → ⚙️ → Install Plugin from Disk…** and select `build/distributions/github-san-1.1.1.zip`.
+To load without restarting IntelliJ IDEA: **Settings → Plugins → ⚙️ → Install Plugin from Disk…** and select `build/distributions/github-san-1.2.0.zip`.
 
 ### Gradle build (CI / JetBrains Marketplace)
 

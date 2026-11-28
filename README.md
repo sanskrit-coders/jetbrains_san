@@ -14,6 +14,7 @@ Adds **Open In → GitHub** (`Open on GitHub`) and **Copy Path/Reference → Git
 - **Works for submodules & worktrees:** resolves `.git` pointers (`gitdir: ...`) and worktree `commondir` configs directly.
 - **No duplicate menu clutter:** detects whether IntelliJ's built-in `Github.Open.In.Browser` already covers the selected file and stays hidden when it does.
 - **Supports files, directories, & line selections:** opens `/blob/<branch-or-sha>/...` (with `#L...` fragments in editors) and `/tree/<branch-or-sha>/...` for directories and submodule roots.
+- **Silent submodule auto-push:** During IDE Git pushes, silently pushes ahead submodules bottom-up whenever `push.recurseSubmodules` is not configured (`PrePushHandler`), plus provides **Push Submodules & Repository** and **Enable Git Submodule Auto-Push** (`push.recurseSubmodules=on-demand` + optional `pre-push` hook).
 - **Diff with `diff_san`:** right-click a file/directory (diff against `HEAD`) or two selected files (side-by-side comparison) using [`local-diff-san`](https://github.com/sanskrit-coders/diff_san/blob/master/local_diff/README.md) from [`diff_san`](https://github.com/sanskrit-coders/diff_san/blob/master/README.md) (`pip install local-diff-san`).
 
 See [`github-san/README.md`](github-san/README.md) for installation and build instructions.

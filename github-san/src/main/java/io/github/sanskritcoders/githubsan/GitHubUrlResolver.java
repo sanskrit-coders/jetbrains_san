@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -31,7 +32,7 @@ public final class GitHubUrlResolver {
 
     private record RemoteInfo(String name, String githubBaseUrl) {}
 
-    private record CommandResult(int exitCode, String stdout, String stderr) {}
+    record CommandResult(int exitCode, String stdout, String stderr) {}
 
     private GitHubUrlResolver() {}
 
@@ -334,7 +335,13 @@ public final class GitHubUrlResolver {
         return null;
     }
 
-    private static CommandResult runGit(Path repoRoot, String... args) throws IOException, InterruptedException {
+    static CommandResult runGit(Path repoRoot, String... args) throws IOException, InterruptedException {
+        return runGit(repoRoot, Duration.ofSeconds(10), null, args);
+    }
+
+    static CommandResult runGit(
+            Path repoRoot, Duration timeout, Map<String, String> envOverrides, String... args)
+            throws IOException, InterruptedException {
         List<String> cmd = new ArrayList<>(args.length + 3);
         cmd.add("git");
         cmd.add("-C");
@@ -342,13 +349,19 @@ public final class GitHubUrlResolver {
         for (String arg : args) {
             cmd.add(arg);
         }
-        Process process = new ProcessBuilder(cmd).start();
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        if (envOverrides != null && !envOverrides.isEmpty()) {
+            pb.environment().putAll(envOverrides);
+        }
+        Process process = pb.start();
+        process.getOutputStream().close();
         ByteArrayOutputStream outBuf = new ByteArrayOutputStream();
         ByteArrayOutputStream errBuf = new ByteArrayOutputStream();
         Thread outThread = drainStream(process.getInputStream(), outBuf);
         Thread errThread = drainStream(process.getErrorStream(), errBuf);
 
-        boolean finished = process.waitFor(10, TimeUnit.SECONDS);
+        long timeoutMs = Math.max(1000L, timeout.toMillis());
+        boolean finished = process.waitFor(timeoutMs, TimeUnit.MILLISECONDS);
         if (!finished) {
             process.destroyForcibly();
             throw new IOException("Timed out running git command: " + String.join(" ", cmd));

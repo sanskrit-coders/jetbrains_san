@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import io.github.sanskritcoders.githubsan.GitHubUrlResolver.GitLocation;
 import io.github.sanskritcoders.githubsan.GitHubUrlResolver.LineRange;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.BiConsumer;
 
@@ -84,6 +85,34 @@ final class SubmoduleGithubActionSupport {
                 .getNotificationGroup(NOTIFICATION_GROUP_ID)
                 .createNotification(title, content, type)
                 .notify(project);
+    }
+
+    static void notifyLater(Project project, String title, String content, NotificationType type) {
+        ApplicationManager.getApplication().invokeLater(() -> notify(project, title, content, type));
+    }
+
+    static Path resolveTargetRepoRoot(AnActionEvent e) {
+        VirtualFile selected = resolveTargetFile(e);
+        Path selectedRoot = null;
+        if (selected != null && selected.isInLocalFileSystem()) {
+            GitLocation loc = GitHubUrlResolver.findGitLocation(selected.toNioPath());
+            if (loc != null) {
+                selectedRoot = loc.repoRoot();
+            }
+        }
+        Project project = e.getProject();
+        Path projectRoot = null;
+        if (project != null && project.getBasePath() != null) {
+            GitLocation projectLoc = GitHubUrlResolver.findGitLocation(Path.of(project.getBasePath()));
+            if (projectLoc != null) {
+                projectRoot = projectLoc.repoRoot();
+            }
+        }
+        if (projectRoot != null && Files.isRegularFile(projectRoot.resolve(".gitmodules"))
+                && (selectedRoot == null || !Files.isRegularFile(selectedRoot.resolve(".gitmodules")))) {
+            return projectRoot;
+        }
+        return selectedRoot != null ? selectedRoot : projectRoot;
     }
 
     private static VirtualFile resolveTargetFile(AnActionEvent e) {

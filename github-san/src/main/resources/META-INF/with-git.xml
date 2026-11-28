@@ -1,1 +1,15 @@
-<idea-plugin />
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <prePushHandler implementation="io.github.sanskritcoders.githubsan.SubmodulePrePushHandler" />
+  </extensions>
+
+  <actions>
+    <reference ref="io.github.sanskritcoders.githubsan.PushWithSubmodules">
+      <add-to-group group-id="Git.MainMenu" relative-to-action="Vcs.Push" anchor="after" />
+      <add-to-group group-id="GitRepositoryActions" relative-to-action="Vcs.Push" anchor="after" />
+    </reference>
+    <reference ref="io.github.sanskritcoders.githubsan.EnableSubmoduleAutoPush">
+      <add-to-group group-id="Git.MainMenu" anchor="last" />
+    </reference>
+  </actions>
+</idea-plugin>

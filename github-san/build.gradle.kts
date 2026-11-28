@@ -28,6 +28,8 @@ dependencies {
 
     intellijPlatform {
         intellijIdea(providers.gradleProperty("platformVersion"))
+        bundledPlugin("Git4Idea")
+        bundledModule("intellij.platform.vcs.dvcs.impl")
         testFramework(TestFrameworkType.Platform)
         pluginVerifier()
     }
